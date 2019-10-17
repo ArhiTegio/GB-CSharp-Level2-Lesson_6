@@ -41,7 +41,5 @@ namespace GB_CSharp_Level2_Lesson_5
         }
 
         internal ObservableCollection<Employee> Employees { get => employees; set => employees = value; }
-
-        //public override string ToString() => $" {Name} Прибыль: {Profit}";
     }
 }
