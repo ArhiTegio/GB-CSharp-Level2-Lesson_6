@@ -15,6 +15,6 @@ namespace GB_CSharp_Level2_Lesson_5
 
         public double Costs { get => costs; set => costs = value; }
         public double Profit { get => profit; set => profit = value; }
-        internal ObservableCollection<Department> Departments { get => departments; set => departments = value; }
+        public ObservableCollection<Department> Departments { get => departments; set => departments = value; }
     }
 }

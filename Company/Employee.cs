@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,27 +11,62 @@ namespace GB_CSharp_Level2_Lesson_5
     /// <summary>
     /// Базовый класс работников
     /// </summary>
-    public abstract class BaseEmployee : IComparable<BaseEmployee>
+    public class Employee : IComparable<Employee>, INotifyPropertyChanged
     {
         double rate = 0;
-        public BaseEmployee(string Name, int Age, int Salary, double rate)
+        string name;
+        int age;
+        int salary;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Employee(string name, int age, int salary, double rate)
         {
-            this.Name = Name;
-            this.Age = Age;
-            this.Salary = Salary;
+            this.name = name;
+            this.age = age;
+            this.salary = salary;
             this.rate = rate;
         }
 
-        public string Name { get; set; }
-        public int Age { get; set; }
-        public int Salary { get; set; }
-        public double Rate { get => rate; set => rate = value; }
+        public string Name
+        {
+            get => name;
+            set
+            {
+                name = value;
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.name)));
+            }
+        }
 
-        /// <summary>
-        /// Зарплата за месяц
-        /// </summary>
-        /// <returns></returns>
-        public abstract double PaymentInManth();
+        public int Age
+        {
+            get => age;
+            set
+            {
+                age = value;
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.age)));
+            }
+        }
+
+        public int Salary
+        {
+            get => salary;
+            set
+            {
+                salary = value;
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.salary)));
+            }
+        }
+
+        public double Rate
+        {
+            get => rate;
+            set
+            {
+                rate = value;
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Rate)));
+            }
+        }
 
         /// <summary>
         /// Данные о работнике
@@ -46,23 +82,9 @@ namespace GB_CSharp_Level2_Lesson_5
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public int CompareTo(BaseEmployee obj)
-        {
-            return obj.Salary > this.Salary ? -1 : 1;
-        }
+        public int CompareTo(Employee obj) => obj.Salary > this.Salary ? -1 : 1;
 
-    }
-
-    /// <summary>
-    /// Работники с фиксированной оплатой труда
-    /// </summary>
-    class Employee : BaseEmployee
-    {
-        public Employee(string Name, int Age, int Salary, double rate) : base(Name, Age, Salary, rate)
-        {
-        }
-
-        public override double PaymentInManth()
+        public double PaymentInManth()
         {
             Salary = (int)Rate;
             return Salary;

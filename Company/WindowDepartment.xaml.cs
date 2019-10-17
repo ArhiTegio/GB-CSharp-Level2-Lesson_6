@@ -19,28 +19,13 @@ namespace GB_CSharp_Level2_Lesson_5
     /// </summary>
     public partial class WindowDepartment : Window
     {
-        Department department;
-        Company company;
-        ListView listView;
-
-        public WindowDepartment(Department department, Company company, ListView listView)
-        {            
-            this.company = company;
-            this.department = department;
+        public WindowDepartment(Department department)
+        {
             InitializeComponent();
             dep_Name.Text = department.Name;
             dep_Profit.Text = department.Profit.ToString();
-            dep_Name.KeyUp += delegate 
-            {
-                department.Name = dep_Name.Text;
-                listView.ItemsSource = company.Departments;
-                listView.Items.Refresh();
-            };
-            dep_Profit.KeyUp += delegate 
-            {
-                department.Profit = Convert.ToInt32(dep_Profit.Text);
-                listView.Items.Refresh();
-            };
+            dep_Name.KeyUp += delegate  { department.Name = dep_Name.Text; };
+            dep_Profit.KeyUp += delegate { department.Profit = Convert.ToInt64(dep_Profit.Text); };
             dep_Profit.KeyDown += new KeyEventHandler(NumericTextBox_KeyDown);
             this.Topmost = true;
             this.Activate();

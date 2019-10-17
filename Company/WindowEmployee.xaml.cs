@@ -19,32 +19,41 @@ namespace GB_CSharp_Level2_Lesson_5
     /// </summary>
     public partial class WindowEmployee : Window
     {
-        BaseEmployee employee;
+        Employee employee;
         Department department;
-        string department_Name;
-        Company company;
         ListView listView;
+        Company company;
 
-        public WindowEmployee(BaseEmployee employee, Department department, Company company, ListView listView)
+        public WindowEmployee(Employee employee, Department department, Company company, ListView listView)
         {
             InitializeComponent();
             this.employee = employee;
             this.department = department;
-            this.company = company;
             this.listView = listView;
-            dep.ItemsSource = company.Departments.Select(x => x.Name);
-            dep.Text = department.Name;
-            dep.SelectionChanged += delegate { Dep_SelectChanged(); };
-            department_Name = department.Name;
+            this.company = company;
+
+            dep.ItemsSource = company.Departments;
+            dep.SelectedItem = department;
             tb_Name.Text = employee.Name;
             tb_Age.Text = employee.Age.ToString();
             tb_Salary.Text = employee.Salary.ToString();
-            tb_Name.KeyUp += new KeyEventHandler(tb_Name_KeyDown);
-            tb_Age.KeyUp += new KeyEventHandler(tb_Age_KeyDown);
-            tb_Salary.KeyUp += new KeyEventHandler(tb_Salery_KeyDown);
+
+            tb_Name.KeyUp += delegate 
+            {
+                employee.Name = tb_Name.Text;
+            };
+            tb_Age.KeyUp += delegate
+            {
+                employee.Age = int.Parse(tb_Age.Text);
+            };
+            tb_Salary.KeyUp += delegate
+            {
+                employee.Salary = int.Parse(tb_Salary.Text);
+            };
             tb_Name.KeyDown += new KeyEventHandler(LetterTextBox_KeyDown);
             tb_Age.KeyDown += new KeyEventHandler(NumericTextBox_KeyDown);
             tb_Salary.KeyDown += new KeyEventHandler(NumericTextBox_KeyDown);
+            this.Closed += delegate { listView.Items.Refresh(); };
             this.Topmost = true;
             this.Activate();
         }
@@ -52,11 +61,14 @@ namespace GB_CSharp_Level2_Lesson_5
         /// <summary>
         /// Изменить отдел дял сотркудника
         /// </summary>
-        private void Dep_SelectChanged()
+        private void Dep_SelectChanged(object sender, SelectionChangedEventArgs e)
         {
-            company.Departments.Where(x => x.Name == department_Name).FirstOrDefault().Employees.Remove((Employee)employee);
-            company.Departments.Where(x => x.Name == dep.Text).FirstOrDefault().Employees.Add((Employee)employee);
-            department_Name = dep.Text;
+            if ((Department)dep.SelectedItem != department)
+            {
+                ((Department)dep.SelectedItem).Employees.Add((Employee)employee);
+                department.Employees.Remove((Employee)employee);
+                department = (Department)dep.SelectedItem;
+            }
         }
 
         /// <summary>
@@ -82,47 +94,6 @@ namespace GB_CSharp_Level2_Lesson_5
                 e.Handled = true;
         }
 
-        /// <summary>
-        /// Событие при изменении имени
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void tb_Name_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (tb_Name != null)
-            {
-                employee.Name = tb_Name.Text;
-                listView.Items.Refresh();
-            }
 
-        }
-
-        /// <summary>
-        /// Событие при изменении возроста
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void tb_Age_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (int.TryParse(tb_Age.Text, out var t))
-            {
-                employee.Age = t;
-                listView.Items.Refresh();
-            }
-        }
-
-        /// <summary>
-        /// Событие при изменении зарплаты
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void tb_Salery_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (int.TryParse(tb_Salary.Text, out var t))
-            {
-                employee.Salary = t;
-                listView.Items.Refresh();
-            }
-        }
     }
 }
